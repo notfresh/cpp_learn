@@ -1,14 +1,15 @@
 #include <iostream>
 #include <map>
 using namespace std;
-void testLeftValue();
-void testMap();
-void TestOperater();
+
 
 #include "test1.h"
 #include "test2.h"
-
-
+#include "class_a.h"
+void testLeftValue();
+void testMap();
+void TestOperater();
+void test_Template_Compare();
 
 int main() {
     cout << "Hello, World!" << endl;
@@ -18,12 +19,30 @@ int main() {
 //     int a = 10;
 //     func(a);
 //
-    test01();
-
-
-
+    //test01();
+    test_Template_Compare();
     return 0;
 }
+
+template<class T>
+bool myCompare(T& a, T& b)
+{
+    if (a == b)
+    {
+        return true;
+    }
+    else
+    {
+        return false;
+    }
+}
+
+void test_Template_Compare(){
+    A2 a(1);
+    A2 a2(2);
+    cout << (a==a2) << endl;
+}
+
 
 void test01()
 {
@@ -68,6 +87,5 @@ void testMap(){
 
     for (map<char,int>::iterator it=first.begin(); it!=first.end(); ++it)
         std::cout << it->first << ":" << it->second << '\n';
-
 }
 
