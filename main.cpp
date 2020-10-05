@@ -6,26 +6,22 @@ using namespace std;
 class A{
 public:
     int m_abc = 1;
-    virtual void f1(int n){
-        cout << "A.f1," << n << ", abc:" <<  abc << endl;
-    }
+
 };
+
 class B: public A{
 public:
-    int abc = 2;
-    virtual void f1(){
-        cout << "B.f1," << endl;
-    }
-
-    virtual void f1(int n){
-        this->A::f1(n);
-    }
+    int m_abc = 2;
+    const int a = 10;
+    B():a(3){}
+    B(int x){}
 };
 
 int main() {
     cout << "Hello, World!" << endl;
-    A *b = new B;
-    b->f1(1);
-    return 0;
+    B *b = new B;
+    cout << b->a << endl; // 3
+    B *b2 = new B(3);
+    cout << b2->a << endl; // 10
 }
 
