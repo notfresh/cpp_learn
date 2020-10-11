@@ -3,4 +3,4 @@ project(cpp_learn)
 
 set(CMAKE_CXX_STANDARD 11)
 
-add_executable(cpp_learn main.cpp testExtend.h testList.h testMap.h)
+add_executable(cpp_learn main.cpp testExtend.h testList.h testMap.h testGeneric.h testGeneric2.h testGenericSort.h)
