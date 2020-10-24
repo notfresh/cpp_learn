@@ -103,7 +103,6 @@ void main_f7_1(){ // 栈对象的虚函数调用，以指针形式
 }
 
 void main_f7_2(){ // 栈对象的虚函数调用，以指针形式
-    // 这里纠正一下 C++ primer plus 上面的一个错误观点，
     Derived item;
     Base *item2 = &item;  //这里没有类型强转
     item2->f1();
@@ -111,9 +110,18 @@ void main_f7_2(){ // 栈对象的虚函数调用，以指针形式
     // Derived f1
 }
 
+void main_f7_3(){ // 栈对象的虚函数调用，以引用形式
+    Derived item;
+    Base &item2 = item;  //这里没有类型强转
+    item2.f1();
+    // 打印结果：
+    // Derived f1
+}
+
 int main() {
     main_f7_1();
     main_f7_2();
+    main_f7_3();
     return 0;
 }
 
