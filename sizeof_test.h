@@ -2,8 +2,8 @@
 // Created by zxzx on 2020/10/25.
 //
 
-#ifndef ZZZ_CCC_H
-#define ZZZ_CCC_H
+#ifndef ZZZ_SIZEOF_TEST_H
+#define ZZZ_SIZEOF_TEST_H
 
 #include <iostream>
 using namespace std;
@@ -14,10 +14,16 @@ public:
     Base():a(0){
         // cout << "Base" << endl;
     }
+
     Base(int pa):a(pa){}
     virtual ~Base(){
         //cout << "Base deconstructor" << endl;
     };
+
+    Base(const Base & item){
+        cout << "copy Base" << endl;
+    }
+
     virtual void f1(){
         cout << "Base f1" << endl;
     }
@@ -59,6 +65,8 @@ void main_f3(){
 
 void main_f4(){
     Base item = Derived();
+    Base *item2 = &item;
+    item2->f1();
     // 打印结果：
     // Derived deconstructor
     // Base deconstructor
@@ -69,7 +77,7 @@ void main_f5(){
     Base * item = new Derived;
     item->f1();
     delete item;
-    // 打印结果：
+    // 打印结果：Derived f1
 }
 
 void main_f6(){ // 栈对象的虚函数调用
@@ -173,6 +181,9 @@ public:
         cout << (m == NULL) << endl;
         cout << m2.m << endl;
     }
+    void f2(){
+        cout << "Test::f2" << endl;
+    }
 };
 
 void main_f11(){
@@ -181,7 +192,18 @@ void main_f11(){
 
     Test* t2 = new Test();
     cout << t2->b << endl;
+    // 结果：
     // error, code 11
+}
+
+void test_f12(){
+    // 注意一个Java程序员不能理解地方，如果一个对象是NULL，它是仍然可以调用这个方法的，只要这个方法可以避免使用this指针
+    // 因为方法不用创建对象就已经存在
+    Test* t = NULL;
+    t->f2();
+
+    // 结果：
+    // Test::f2
 }
 
 void main_f12(){ // 初始化的值
@@ -192,4 +214,7 @@ void main_f12(){ // 初始化的值
     //1
     //10
 }
-#endif //ZZZ_CCC_H
+
+
+
+#endif //ZZZ_SIZEOF_TEST_H
