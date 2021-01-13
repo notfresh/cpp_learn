@@ -1,70 +1,59 @@
 #include <iostream>
 #include <typeinfo>
 #include <vector>
-//
-// Created by zxzx on 2020/10/13.
-//
+
 using namespace std;
-#include <iostream>
 
-class B{
+
+
+class A {
 public:
-    int a = 1;
-    int a2 = 1;
-    virtual void f1(){
-        cout << "base "<< a << endl;
+    virtual void f() {}
+
+public :
+    A() {
+        f();
     }
 };
 
-class D: public B{
+class B1 : public A
+{
+private:
+    char *_s;
 public:
-    int a = 2;
-    void f2(){
-        cout << a << endl;
+
+    B1() {
+        _s = new char[1024];
     }
-    virtual void f1(){
-        cout << "derived "<< a << endl;
+
+private:
+
+    void f() {
+        delete[] _s;
+        _s = NULL;
     }
+
 };
 
-void test_extend(){
-    B *b = new D;
-    cout << sizeof(*b) << endl;
-    b->f1();
-    // 16
-    // base 1
+class B2 : public A {
+private:
+    int *_m;
+public:
+    B2() {
+        _m = new int(2016);
+    }
 
-    // 16
-    //derived 2
-}
-
-void test_extend2(){
-    D *b = new D;
-    cout << sizeof(*b) << endl;
-    b->f2();
-    //12
-    //2
-}
-
-void test_extend3(){
-    B *b = NULL;
-    cout << "size of NULL point b:" << sizeof(*b) << endl;
-    // size of NULL point b:8
-}
-
-int t = sizeof(int);
-
-
-// #include "test_oop/constructor_test.h"
-// #include "Lt53_jzoff.h"
-#include "testGenericProgramming/testGeneric2.h"
+private:
+    virtual void f() {
+        delete _m;
+        _m = NULL;
+    }
+};
 
 int main() {
-
-    generic_print();
+    A *a1 = new B1();
+    A *a2 = new B2();
+    delete a1;
+    delete a2;
     return 0;
 }
-
-
-
-

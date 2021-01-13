@@ -1,0 +1,3 @@
+/Users/zxzx/projects/learn_projects/cpp_learn/test_make_file/cmake2/CMakeFiles/rebuild_cache.dir
+/Users/zxzx/projects/learn_projects/cpp_learn/test_make_file/cmake2/CMakeFiles/edit_cache.dir
+/Users/zxzx/projects/learn_projects/cpp_learn/test_make_file/cmake2/CMakeFiles/main.dir
