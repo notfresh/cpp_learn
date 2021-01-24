@@ -1,12 +1,8 @@
 //
 // Created by zxzx on 2020/12/8.
 //
+#include <zxlib/using_std.h>
 
-
-#include <zxlib/print.h>
-#include <future>
-#include <cmath>
-using namespace std;
 
 void mysum(int k, promise<long>& promi){ // 注意要使用引用 @promise
 	long sum = 0;
@@ -25,7 +21,6 @@ void f1(){
 	t1.join();
 }
 
-using namespace std;
 int main() {
 	f1();
 }
