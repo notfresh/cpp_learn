@@ -19,7 +19,12 @@
  * 原始代码来自 CCIA
  *  */
 
-
+/**
+ *
+ * 这个类的意义在于：作为一个包装类，包装 vector<std::thread>， 确保每一个线程都能被 Join，
+ * 如果一个线程没有被Join，那么主线程结束的时候，这个线程就会被终止，这是我们不想看到的
+ * 这是一个vector版本的thread_guard
+ * */
 class join_threads {
 	std::vector<std::thread> &threads;
 public:
@@ -35,8 +40,8 @@ public:
 };
 
 
-class thread_pool
-{
+class thread_pool{
+private:
 	std::atomic_bool done;
 	// 难点在于如何保存一个函数，这是一个新特性，我们需要了解
 	// void() 就是表示任何类型的函数声明都可以，不局限与某一种
@@ -51,7 +56,7 @@ class thread_pool
 	destroyed in the right order; you can’t destroy the queue safely until all the threads
 	have stopped, for example.
 	 * */
-	join_threads joiner;
+	join_threads joiner; // 必须晚于threads定义，因为其析构函数需要用到threads
 	void worker_thread()
 	{
 		while(!done)
@@ -80,19 +85,22 @@ public:
 			for(unsigned i=0;i<thread_count;++i)
 			{
 				threads.push_back(
+						// 我们需要注意的是，thread类需要的是一个指针，所以要给方法名用取地址符
 						std::thread(&thread_pool::worker_thread,this));
 			}
 		}
 		catch(...) // 如果有异常了， 就终止这个简陋的线程池。
 		{
-			done=true;
+			done=true; // 遇到异常设置为true
 			throw;
 		}
 	}
+
 	~thread_pool()
 	{
-		done=true;
+		done=true; // 析构的时候设置为true, 先调用类本身析构函数里的内容，然后再调用成员变量的析构函数
 	}
+
 	template<typename FunctionType>
 	void submit(FunctionType f)
 	{

@@ -259,9 +259,11 @@ int main(int argc, char *argv[]) {
 			if ((events[i].events & EPOLLIN) && (ev->events & EPOLLIN)) {           //读就绪事件
 				ev->call_back(ev->fd, events[i].events, ev->arg);
 			}
+
 			if ((events[i].events & EPOLLOUT) && (ev->events & EPOLLOUT)) {         //写就绪事件
 				ev->call_back(ev->fd, events[i].events, ev->arg);
 			}
+
 		}
 	}
 

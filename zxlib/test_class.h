@@ -22,10 +22,30 @@ public:
     const int a = 10;
     B():a(3){}
     B(int x){}
+
 private:
 	void f1(){ // 如果B 不需要被继承了，可以不写 virtual 关键字的
         std::cout << "class B" << std::endl;
     }
 };
+
+class C: public B{
+public:
+	void f1(){
+		std::cout << "class C" << std::endl;
+	}
+};
+
+
+class SimpleClass{
+
+public:
+	int i1 = 1;
+
+	void f1(){
+		std::cout << "class A" << std::endl;
+	}
+};
+
 
 #endif //CPP_LEARN_TEST_CLASS_H

@@ -44,6 +44,7 @@ int main(void){
 		for(int i=0; i<len; i++){
 			buf[i] = toupper(buf[i]); // 来自 <ctype.h>
 		}
+		// 写的话， 是不是也是一个阻塞操作呢？
 		write(cfd, buf, len); // write函数也源自于 arpa net
 	}
 

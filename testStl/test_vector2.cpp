@@ -6,56 +6,51 @@
 #include <vector>
 #include <iostream>
 #include <fstream>
-
+#include <zxlib/print.h>
 using namespace std;
 
 void test_vector(){
-    vector<int> vctr;
+	vector<int> tmp{2,1};
+//    vector<vector<int,int> > vctr(3, tmp); //@双层vector
+    vector<vector<int>> vctr(3); //@双层vector
+//    for(int i=0; i<3; i++){
+//    	print(vctr[i][0]);
+//    	print(vctr[i][1]);
+//    }
 }
 
-void test_vector2(){
-    int a = int(-1); // 默认是0
-    cout << a<< endl;
+void test_vector1(){
+//	vector<vector<int,int>> vctr(3); //@双层vector
+//	for(int i=0; i<3; i++){
+//		print(vctr[i][0]);
+//		print(vctr[i][1]);
+//	}
 }
 
-void test_erase(){
-    vector<int> arr{1,2,3,4,5,6};
-    for(vector<int>::iterator it=arr.begin();it!=arr.end();it++){
-        if(*it!=3) cout << *it << endl;
-        if(*it==3){
-            arr.erase(it);
-            it--; // 数据前移，务必--；
-        }
-    }
+void overvisit(){
+	vector<int> ivec(10,2);
+	cout<<ivec[0]<<endl;
+	auto p3 = ivec.begin()+3;
+	cout << *p3 << endl;
+	ivec.erase(ivec.begin()+2);
+	cout << *p3 << endl;
 }
 
-void test_read_data(){
-    vector<int> arr;
-    ifstream in("/Users/zxzx/projects/cpp_learn/testStl/data.txt");
-    if(!in){
-        cout << "infile_error" << endl;
-        return ;
-    }
-    int tmp = 0;
-    while(!in.eof()){
-        in >> tmp;
-        arr.push_back(tmp);
-    }
-    in.close();
-    sort(arr.begin(), arr.end());
-    for(int c: arr){
-        cout << c << '\t' ;
-    }
-    ofstream out("/Users/zxzx/projects/cpp_learn/testStl/data3.txt"); // 没有的话就会自己创建！！
-    if(!out){
-        cout << "out file_error" << endl;
-        return;
-    }
-    for(int c: arr){
-        out << c << '\t';
-    }
-    out.close();
-    cout << endl;
+void test_size(){
+	std::vector<int> v;
+	std::cout << "Default-constructed capacity is " << v.capacity() << '\n';
+	v.resize(100);
+	std::cout << "Capacity of a 100-element vector is " << v.capacity() << '\n';
+	v.clear();
+	std::cout << "Capacity after clear() is " << v.capacity() << '\n';
+	v.shrink_to_fit();
+	std::cout << "Capacity after shrink_to_fit() is " << v.capacity() << '\n';
+}
+
+int main(){
+//	test_vector();
+//	overvisit();
+	test_size();
 }
 
 

@@ -16,27 +16,26 @@ void mysum(int k, promise<long>& promi){ // 注意要使用引用 @promise
 void f1(){
 	promise<long> promi;
 	future<long> ret = promi.get_future();
-	thread t1(&mysum, 5,  ref(promi)); // @ref
+	thread t1(&mysum, 5,  ref(promi)); // promise是一个对象
 	print(ret.get());
 	t1.join();
 }
 
+void test_set_value(future<int>& futu){
+	int v = futu.get();
+	print(v);
+}
+
+void f2(){
+	promise<int> prom;
+	future<int> futu = prom.get_future();
+	thread t1(test_set_value, ref(futu));
+	prom.set_value(100);
+	t1.join();
+}
+
+
 int main() {
-	f1();
+//	f1();
+	f2();
 }
-
-/**	结果是随机的
-
-enter f1,
-abc
-1
-1
-
- ========
-abcenter f1,
-1
-1
-
-}
-*/
-

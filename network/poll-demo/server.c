@@ -24,30 +24,40 @@ int main(int argc, char *argv[])
     struct pollfd client[OPEN_MAX];
     struct sockaddr_in cliaddr, servaddr;
 
+	// step1: 构建监听socket类型
     listenfd = Socket(AF_INET, SOCK_STREAM, 0);
 
     int opt = 1;
     setsockopt(listenfd, SOL_SOCKET, SO_REUSEADDR, &opt, sizeof(opt));
 
+	// step2: 设置监听端口和IP（监听网上的任何IP报，也即是对外提供服务，这些几乎都是固定的了
     bzero(&servaddr, sizeof(servaddr));
     servaddr.sin_family = AF_INET;
     servaddr.sin_addr.s_addr = htonl(INADDR_ANY);
     servaddr.sin_port = htons(SERV_PORT);
 
+	// step3: 绑定 socket 和监听的IP与端口，socket是一个容器，可以存放数据，而监听配置是设置，两者需要结合起来
     Bind(listenfd, (struct sockaddr *)&servaddr, sizeof(servaddr));
+
+	// step4: 开始监听？是的，这里会阻塞，第一次监听,这里和普通单点socket编程一样
     Listen(listenfd, 128);
 
+    // step5: 把 主套接字 加入待监听数组
     client[0].fd = listenfd;                    /* 要监听的第一个文件描述符 存入client[0]*/
     client[0].events = POLLIN;                  /* listenfd监听普通读事件 */
 
+    // step6: 初始化其他未使用的坑位
     for (i = 1; i < OPEN_MAX; i++)
         client[i].fd = -1;                      /* 用-1初始化client[]里剩下元素 0也是文件描述符,不能用 */
 
     maxi = 0;                                   /* client[]数组有效元素中最大元素下标 */
 
+    // 因为是服务器，所以要一直工作，接受外部的连接
     for ( ; ; ) {
+    	// step7: 监听全部注册的套接字，目前只有一个主套接字
         nready = poll(client, maxi+1, -1);      /* 阻塞监听是否有客户端链接请求 */
 
+        // step7.1: 监听主套接字
         if (client[0].revents & POLLIN) {       /* listenfd有读事件就绪 */
 
             clilen = sizeof(cliaddr);
@@ -71,7 +81,7 @@ int main(int argc, char *argv[])
             if (--nready <= 0)
                 continue;                       /* 没有更多就绪事件时,继续回到poll阻塞 */
         }
-
+		// step8: 监听其他连接的套接字
         for (i = 1; i <= maxi; i++) {           /* 前面的if没满足,说明没有listenfd满足. 检测client[] 看是那个connfd就绪 */
             if ((sockfd = client[i].fd) < 0)
                 continue;

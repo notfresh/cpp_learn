@@ -3,9 +3,6 @@
 // 两个线程 轮换打印0，1
 //
 
-#ifndef ZZZ_PRINT01_H
-#define ZZZ_PRINT01_H
-
 #include <iostream>
 #include <thread>
 #include <mutex>
@@ -33,4 +30,3 @@ int main(){
     testPrint01();
 }
 
-#endif //ZZZ_PRINT01_H

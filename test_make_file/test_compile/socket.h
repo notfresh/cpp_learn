@@ -2,7 +2,8 @@
  *
  * This module has been modified by Radim Kolar for OS/2 emx
  */
-
+#ifndef CPP_LEARN_A_H
+#define CPP_LEARN_A_H
 /***********************************************************************
   module:       socket.c
   program:      popclient
@@ -12,7 +13,8 @@
   environment:  DEC Ultrix 4.3 
   description:  UNIX sockets code.
  ***********************************************************************/
- 
+
+
 #include <sys/types.h>
 #include <sys/socket.h>
 #include <fcntl.h>
@@ -26,26 +28,44 @@
 #include <stdlib.h>
 #include <stdarg.h>
 
-#ifndef SOCKET_H
-#define SOCKET_H
+
+#define METHOD_GET 0
+#define METHOD_HEAD 1
+#define METHOD_OPTIONS 2
+#define METHOD_TRACE 3
+
+const char* PROGRAM_VERSION = "1.5";
+
+//enum method_t { METHOD_GET, METHOD_HEAD, METHOD_OPTIONS, METHOD_TRACE };
+//method_t method = METHOD_GET;
 
 struct bench_request{
-	int http10;
+	int http10; // http版本，根据请求方法来定
 	char* proxyhost;
-	int method;
+	int proxyport; // 接受的代理服务器
 
-	char* url;
+	int method;
+	char* url; // 用户传进来的url
 	char* host;
 
-	int proxyport;
-
-	char *request;
+	char *request;// 生成的请求报文
 
 	int clients;
 	int benchtime;
 
 	int force;
 	int force_reload;
+
+	bench_request(){
+		http10=1;
+		method=METHOD_GET;
+		clients=1; // 这是一个整数
+		force=0;
+		force_reload=0;
+		proxyport=80;
+		proxyhost=NULL;
+		benchtime=30; // 默认执行30秒
+	}
 };
 
 int Socket(const char *host, int clientPort)

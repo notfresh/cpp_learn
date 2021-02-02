@@ -13,7 +13,6 @@ void test_cast1(){ //@cast
     //  *a = 3;
     *bp = 3; // 没用
     cout << b << endl;
-
 }
 
 void test_cast2(){
@@ -23,11 +22,27 @@ void test_cast2(){
 
 void test_cast3(){
     int b = 1;
-    char p = reinterpret_cast<char>(b); // error: reinterpret_cast from 'int' to 'char' is not allowed
+//    char p = reinterpret_cast<char>(b); // error: reinterpret_cast from 'int' to 'char' is not allowed
 }
+
+class B{
+public:
+	int m_iNum;
+	B(){}
+};
+
+void foo(){
+	const B b1;
+//	b1.m_iNum = 100; //comile error
+	B* b2 = const_cast<B*>(&b1);
+	b2->m_iNum = 200; //fine
+	cout << b1.m_iNum << endl;
+}
+
 
 int main(){
     test_cast3();
+	foo();
 }
 
 

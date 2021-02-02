@@ -12,17 +12,17 @@
 #include <stdlib.h>
 #include <poll.h>
 
-#define USER_LIMIT 5
+#define USER_LIMIT 5 //最大允许使用5个客户连接
 #define BUFFER_SIZE 64
 #define FD_LIMIT 65535
 
 struct client_data
 {
     sockaddr_in address;
-    char* write_buf;
-    char buf[ BUFFER_SIZE ];
+    char* write_buf; //写的buffer，
+    char buf[ BUFFER_SIZE ]; // 可读的buffer，也就是用户传到服务器的数据
 };
-
+// 封装设置非阻塞读的逻辑
 int setnonblocking( int fd )
 {
     int old_option = fcntl( fd, F_GETFL );
@@ -38,48 +38,56 @@ int main( int argc, char* argv[] )
         printf( "usage: %s ip_address port_number\n", basename( argv[0] ) );
         return 1;
     }
+	// step1: 获取IP和port
     const char* ip = argv[1];
     int port = atoi( argv[2] );
 
     int ret = 0;
+	// step2: 初始化连接配置
     struct sockaddr_in address;
     bzero( &address, sizeof( address ) );
     address.sin_family = AF_INET;
     inet_pton( AF_INET, ip, &address.sin_addr );
     address.sin_port = htons( port );
-
+	// step3: 创建连接用的socket
     int listenfd = socket( PF_INET, SOCK_STREAM, 0 );
     assert( listenfd >= 0 );
-
+	// step4: 绑定 socket 和监听的IP与端口，socket是一个容器，可以存放数据，而监听配置是设置，两者需要结合起来
     ret = bind( listenfd, ( struct sockaddr* )&address, sizeof( address ) );
     assert( ret != -1 );
 
+    // step5: 开始监听？是的，这里会阻塞，第一次监听,这里和普通单点socket编程一样
     ret = listen( listenfd, 5 );
     assert( ret != -1 );
 
     client_data* users = new client_data[FD_LIMIT];
+
+    // step6: 初始化一个监听的poll数组
     pollfd fds[USER_LIMIT+1];
-    int user_counter = 0;
     for( int i = 1; i <= USER_LIMIT; ++i )
     {
         fds[i].fd = -1;
         fds[i].events = 0;
     }
+	// step6.1: 把 主套接字 加入待监听数组，放到第一个位置
     fds[0].fd = listenfd;
     fds[0].events = POLLIN | POLLERR;
     fds[0].revents = 0;
 
+	int user_counter = 0;
     while( 1 )
     {
+		// step7: 监听全部注册的套接字，目前只有一个主套接字
         ret = poll( fds, user_counter+1, -1 );
         if ( ret < 0 )
         {
             printf( "poll failure\n" );
             break;
         }
-    
+
         for( int i = 0; i < user_counter+1; ++i )
         {
+			// step7.1: 监听主套接字
             if( ( fds[i].fd == listenfd ) && ( fds[i].revents & POLLIN ) )
             {
                 struct sockaddr_in client_address;
@@ -102,10 +110,13 @@ int main( int argc, char* argv[] )
                 users[connfd].address = client_address;
                 setnonblocking( connfd );
                 fds[user_counter].fd = connfd;
+                // 注册监听的三种事件，分别是可读，挂起(hangup，直译上吊自杀)
                 fds[user_counter].events = POLLIN | POLLRDHUP | POLLERR;
                 fds[user_counter].revents = 0;
                 printf( "comes a new user, now have %d users\n", user_counter );
             }
+			// step7.2 监听其他套接字，这些套接字都是有上面的逻辑加进来的
+			// step7.2.1: 错误，连接失败的处理方法
             else if( fds[i].revents & POLLERR )
             {
                 printf( "get an error from %d\n", fds[i].fd );
@@ -118,6 +129,7 @@ int main( int argc, char* argv[] )
                 }
                 continue;
             }
+            // step7.2.2: 发现停止连接的处理方法
             else if( fds[i].revents & POLLRDHUP )
             {
                 users[fds[i].fd] = users[fds[user_counter].fd];
@@ -127,6 +139,7 @@ int main( int argc, char* argv[] )
                 user_counter--;
                 printf( "a client left\n" );
             }
+			// step7.2.3: 发现有数据可读的处理方法
             else if( fds[i].revents & POLLIN )
             {
                 int connfd = fds[i].fd;
@@ -177,8 +190,9 @@ int main( int argc, char* argv[] )
             }
         }
     }
-
     delete [] users;
     close( listenfd );
     return 0;
 }
+
+

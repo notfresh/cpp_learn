@@ -9,19 +9,18 @@ public:
     int i1 = 1;
     static int a;
 
-    virtual void f1(){
+    void f1(){
         std::cout << "class A" << std::endl;
     }
-
-    static void f2(){
+    static void f2(){ // 没有this指针,无法调用普通成员函数
         cout << a << endl;
+        //f1();
     }
 };
+int A::a = 2;
 
 class B:public A{
-
 };
-int A::a = 2;
 
 
 void test_static(){

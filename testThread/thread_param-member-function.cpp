@@ -8,20 +8,20 @@
 #include <mutex>
 #include <string>
 using namespace std;
-int number;
-mutex lck;
-int MAX_NUM = 4;
 
+class SimpleClass{
 
-void f1(string &a){
-    cout << a << endl;
-    cout << &a << endl;
-}
+public:
+	int i1 ;
+
+	void f1(){
+		std::cout << "class A" << std::endl;
+	}
+};
 
 void testPrint01(){
-    string a = "abcef";
-    cout << "out: " << &a << endl;
-    thread t(f1, ref(a));
+	SimpleClass c;
+    thread t(&SimpleClass::f1, &c);
     t.join();
 }
 

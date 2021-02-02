@@ -4,14 +4,14 @@
 #include <string.h>
 #include <arpa/inet.h>
 #include <ctype.h>
-
 #include "wrap.h"
 
 #define SERV_PORT 6666
 
 int main(int argc, char *argv[])
 {
-    int i, j, n, maxi;
+
+	int i, j, n, maxi;
 
     int nready, client[FD_SETSIZE];                 /* 自定义数组client, 防止遍历1024个文件描述符  FD_SETSIZE默认为1024 */
     int maxfd, listenfd, connfd, sockfd;
@@ -21,34 +21,41 @@ int main(int argc, char *argv[])
     socklen_t clie_addr_len;
     fd_set rset, allset;                            /* rset 读事件文件描述符集合 allset用来暂存 */
 
+    // step1: 构建监听socket类型
     listenfd = Socket(AF_INET, SOCK_STREAM, 0);
 
     int opt = 1;
     setsockopt(listenfd, SOL_SOCKET, SO_REUSEADDR, &opt, sizeof(opt));
 
+	// step2: 设置监听端口和IP（监听网上的任何IP报，也即是对外提供服务，这些几乎都是固定的了
     bzero(&serv_addr, sizeof(serv_addr));
     serv_addr.sin_family= AF_INET;
     serv_addr.sin_addr.s_addr = htonl(INADDR_ANY);
     serv_addr.sin_port= htons(SERV_PORT);
 
+	// step3: 绑定 socket 和监听的IP与端口，socket是一个容器，可以存放数据，而监听配置是设置，两者需要结合起来
     Bind(listenfd, (struct sockaddr *)&serv_addr, sizeof(serv_addr));
-    Listen(listenfd, 128);
 
+	// step4: 开始监听？是的，这里会阻塞，第一次监听
+    Listen(listenfd, 128);
     maxfd = listenfd;                                           /* 起初 listenfd 即为最大文件描述符 */
 
     maxi = -1;                                                  /* 将来用作client[]的下标, 初始值指向0个元素之前下标位置 */
     for (i = 0; i < FD_SETSIZE; i++)
         client[i] = -1;                                         /* 用-1初始化client[] */
 
+	// step5: 初始化一个位图，准备使 select 监听主套接字
     FD_ZERO(&allset);
     FD_SET(listenfd, &allset);                                  /* 构造select监控文件描述符集 */
 
     while (1) {   
         rset = allset;                                          /* 每次循环时都从新设置select监控信号集 */
+		// step6: 调用select，开始让内核帮忙监听所有的 socket
         nready = select(maxfd+1, &rset, NULL, NULL, NULL);
         if (nready < 0)
             perr_exit("select error");
 
+		// step7: 如果有连接来了，进行处理，把连接加入监听范围
         if (FD_ISSET(listenfd, &rset)) {                        /* 说明有新的客户端链接请求 */
 
             clie_addr_len = sizeof(clie_addr);
@@ -79,10 +86,12 @@ int main(int argc, char *argv[])
                 continue;
         } 
 
+        // step8: 遍历非监听的socket, 并处理他们
         for (i = 0; i <= maxi; i++) {                               /* 检测哪个clients 有数据就绪 */
 
             if ((sockfd = client[i]) < 0)
                 continue;
+
             if (FD_ISSET(sockfd, &rset)) {
 
                 if ((n = Read(sockfd, buf, sizeof(buf))) == 0) {    /* 当client关闭链接时,服务器端也关闭对应链接 */
