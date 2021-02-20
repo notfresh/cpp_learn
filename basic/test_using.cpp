@@ -8,6 +8,7 @@
 
 
 class A{
+	// using namespace std; 这是报错的!
 	using string = std::string;
 	using map = std::map<string, string>;
 	string f1(){
@@ -16,8 +17,9 @@ class A{
 };
 
 int main(){
-	using std::string;
-	using std::cout;
+	// using std::string;
+	// using std::cout;
+	using namespace std;
     cout << "a is \n" ;
 	string a = "abc\n";
 	cout << a;

@@ -3,3 +3,6 @@ cmake-build-debug/
 *.cmake
 */CMakeFiles/
 .DS_Store
+*a.out
+.vscode/
+*build*

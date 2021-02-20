@@ -47,10 +47,39 @@ void test_size(){
 	std::cout << "Capacity after shrink_to_fit() is " << v.capacity() << '\n';
 }
 
+// 测试一下基本的 priority_queue的写法
+#include <queue>
+#include <zxlib/print.h>
+void test_priority_queue(){
+	std::priority_queue<int, std::vector<int>, greater<int>> q;
+	q.push(1);
+	q.push(3);
+	q.push(5);
+	q.push(2);
+	while(!q.empty()){
+		int t = q.top();
+		print(t);
+		q.pop();
+	}
+}
+
+
+//测试查找
+void test_find(){
+	vector<vector<int>> tmp{{1,2,3}, {1,2}};
+	vector<int> tmp2{1,2,5};
+	// vector<int> tmp3{1,2,4};
+	// tmp.push_back(tmp2);
+	// print(tmp);
+	print(find(tmp.begin(), tmp.end(), tmp2)!=tmp.end());
+}
+
 int main(){
 //	test_vector();
 //	overvisit();
-	test_size();
+//	test_size();
+	// test_priority_queue();
+	test_find();
 }
 
 

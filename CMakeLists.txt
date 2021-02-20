@@ -3,9 +3,6 @@ project(cpp_learn)
 set(CMAKE_CXX_STANDARD 11)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
 
-add_executable(heap_sort algo/heap_sort.cpp)
-add_executable(test_using basic/test_using.cpp)
-add_executable(test_virtual test_oop/test_virtual.cpp)
-add_executable(test_vector2 testStl/test_vector2.cpp)
-add_executable(testMap testStl/testMap.cpp)
-add_executable(test_using2 basic/test_using2.cpp)
+
+
+add_executable(test_lt114 algo/test_lt114.cpp)

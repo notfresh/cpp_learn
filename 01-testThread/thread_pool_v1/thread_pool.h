@@ -26,10 +26,10 @@
  * 这是一个vector版本的thread_guard
  * */
 class join_threads {
+private:
 	std::vector<std::thread> &threads;
 public:
-	explicit join_threads(std::vector<std::thread> &threads_) :
-			threads(threads_) {}
+	explicit join_threads(std::vector<std::thread> &threads_) :threads(threads_) {}
 
 	~join_threads() { // 当这个对象最后被析构的时候，确保每个thread都被join了! 这个很关键
 		for (unsigned long i = 0; i < threads.size(); ++i) {
@@ -42,11 +42,11 @@ public:
 
 class thread_pool{
 private:
+	std::vector<std::thread> threads;
+	threadsafe_queue<std::function<void()> > work_queue;
 	std::atomic_bool done;
 	// 难点在于如何保存一个函数，这是一个新特性，我们需要了解
 	// void() 就是表示任何类型的函数声明都可以，不局限与某一种
-	threadsafe_queue<std::function<void()> > work_queue;
-	std::vector<std::thread> threads;
 	/**
 	 *
 	The join_threads instance will ensure that all the threads have completed before the
@@ -57,53 +57,44 @@ private:
 	have stopped, for example.
 	 * */
 	join_threads joiner; // 必须晚于threads定义，因为其析构函数需要用到threads
-	void worker_thread()
-	{
-		while(!done)
-		{
+
+	void worker_thread(){
+		while(!done){
 			std::function<void()> task;
-			if(work_queue.try_pop(task))
-			{
+			if(work_queue.try_pop(task)){
 				task();
 			}
-			else
-			{
+			else{
 				std::this_thread::yield();
 			}
 		}
 	}
 
 public:
-	thread_pool():
-			done(false),joiner(threads)
-	{
+	thread_pool():done(false),joiner(threads){
 		unsigned const thread_count=std::thread::hardware_concurrency();
 		print("线程数量：");
 		print(thread_count);
-		try
-		{
-			for(unsigned i=0;i<thread_count;++i)
-			{
+		try{
+			for(unsigned i=0;i<thread_count;++i){
 				threads.push_back(
 						// 我们需要注意的是，thread类需要的是一个指针，所以要给方法名用取地址符
 						std::thread(&thread_pool::worker_thread,this));
 			}
 		}
-		catch(...) // 如果有异常了， 就终止这个简陋的线程池。
-		{
+		// 如果有异常了， 就终止这个简陋的线程池。
+		catch(...){
 			done=true; // 遇到异常设置为true
 			throw;
 		}
 	}
 
-	~thread_pool()
-	{
+	~thread_pool(){
 		done=true; // 析构的时候设置为true, 先调用类本身析构函数里的内容，然后再调用成员变量的析构函数
 	}
 
 	template<typename FunctionType>
-	void submit(FunctionType f)
-	{
+	void submit(FunctionType f){
 		work_queue.push(std::function<void()>(f)); //@函数指针
 	}
 };

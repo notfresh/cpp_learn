@@ -39,8 +39,36 @@ void heapSort(vector<int>& arr){
 	}
 }
 
+class Solution {
+public:
+	int rob(vector<int>& nums) {
+		int sz = nums.size();
+		if(sz == 0) return 0;
+		vector<int> dp(sz);
+		for(int i=0; i<sz; i++){
+			if(i==0){
+				dp[i] = nums[i];
+			}
+			else if(i==1){
+ 				dp[i] == nums[i];
+			}
+			else{
+				dp[i] = max(dp[i-2]+nums[i], dp[i-1]);
+			}
+		}
+		return dp[sz-1];
+	}
+};
+
+void test_rob(){
+	vector<int> nums = {1,1};
+	int t = Solution().rob(nums);
+	cout << t << endl;
+}
+
 int main(){
-	vector<int> arr{1,2,3,4,6,10,8};
-	heapSort(arr);
-	print(arr);
+//	vector<int> arr{1,2,3,4,6,10,8};
+//	heapSort(arr);
+//	print(arr);
+	test_rob();
 }

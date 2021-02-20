@@ -3,46 +3,30 @@
 //
 
 #include <zxlib/TreeNode.h>
-
-class Solution {
-public:
-	void flatten(TreeNode* root) { // 2,3,4
-		preOrder(root, nullptr);
-		int a = 1;
-	}
-
-	TreeNode* preOrder(TreeNode* root, TreeNode* pre){
-		if(!root) return pre;
-		if(pre){
-			pre->left = nullptr;
-			pre->right = root;
-		}
-		pre = preOrder(root->left,root);//2,1
-		pre = preOrder(root->right, pre);
-		return pre;
-	}
-};
+#include <map>
 #include <time.h>
 #include <zxlib/using_std.h>
 #include <stdio.h>
 
-struct a{
-	int b;
-	char c;
+
+class Solution {
+public:
+	int subarraySum(vector<int>& nums, int k) {
+		int ret = 0;
+		map<int, int> memo{{0,1}};
+		int sum = 0;
+		for(int num: nums){
+			sum += num;
+			ret += memo.count(sum-k);
+			memo[sum] += 1;
+		}
+		return ret;
+	}
 };
 
 int main(){
-//	TreeNode *n1 = new TreeNode(1);
-//	TreeNode *n2 = new TreeNode(2);
-//	Solution().flatten(n1);
-//	n1->left = n2;
-
-	time_t t;
-	t = time(NULL);
-
-	int ii = time(&t);
-	printf("ii = %d\n", ii);
-	printf("%d\n" , sizeof(int));
-	printf("%d\n" , sizeof(double));
-	printf("%d\n" , sizeof(struct a));
+	vector<int> num{1,-1, 0};
+	int k = 0;
+	int z = Solution().subarraySum(num, k);
+	cout << z << endl;
 }

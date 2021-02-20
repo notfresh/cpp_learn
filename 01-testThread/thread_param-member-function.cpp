@@ -13,7 +13,6 @@ class SimpleClass{
 
 public:
 	int i1 ;
-
 	void f1(){
 		std::cout << "class A" << std::endl;
 	}

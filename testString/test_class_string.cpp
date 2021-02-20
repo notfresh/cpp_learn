@@ -31,7 +31,7 @@ vector<string> splitx(const string& s, const string& spitter){
 	return ret;
 }
 
-
+// 测试字符转数字
 void test_splitx(){
 	string s1 = "1 2 3 4 56";
 	string spliter = string(" ");
@@ -43,6 +43,7 @@ void test_splitx(){
 	print("abc"+to_string(124) );
 }
 
+// 测试字符转数字
 void print_stoi(){
 	string a = "10a";
 	print(stoi(a));
@@ -56,17 +57,24 @@ void print_substr1(){
 	print(a2.substr(1).size());
 }
 
+// 测试追加
 void test_append(){
 	string a = "a10a";
 	print(a.append("xxx"));
 }
 
+// 测试
 void test_append2(){
 	print(string("a10a") + "abc" + "efg");
 	print("a10a" + string("abc") + "efg");
 }
 
-
+// 测试排序
+void test_sort(){
+	string a = "adbcefg";
+	sort(a.begin(), a.end());
+	print(a);
+}
 
 int main(){
 //	test_class1();
@@ -75,5 +83,6 @@ int main(){
 //	print_substr1();
 //	test_append();
 //	test_append2();
-	test_splitx();
+//	test_splitx();
+	test_sort();
 }
